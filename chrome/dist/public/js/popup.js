@@ -1,0 +1,1 @@
+const submit=document.getElementById("submit"),uuid=document.getElementById("uuid"),tips=document.getElementById("tips");submit.onclick=()=>{uuid.value&&(chrome.runtime.sendMessage({type:"popup",data:uuid.value}),tips.innerText="项目已开始运行，请回控制台查看")};

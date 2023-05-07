@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "EasyCrawl",
+  "version": "1.1",
+  "description": "一款基于浏览器插件的爬虫工具，轻松应对中小型数据爬取场景",
+
+  "action": {
+    "default_title": "开启EasyCrawl",
+    "default_popup": "popup.html"
+  },
+
+  "background": {
+    "service_worker": "server.js"
+  },
+
+  "icons": {
+    "32": "./public/img/logo_32.png",
+    "48": "./public/img/logo_48.png"
+  },
+
+  "host_permissions": ["http://*/*", "https://*/*"],
+
+  "permissions": ["scripting", "tabs", "storage"]
+}
