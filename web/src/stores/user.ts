@@ -4,13 +4,13 @@ import { ref } from 'vue'
 import router from '@/router'
 import { login } from '@/api/login'
 export const useUserStore = defineStore('user', () => {
-  //jwt验证相关
+  //使用pinia当页面刷新时会出现数据丢失情况，此处还未考虑pinia持久化
+
   const token = ref<string>('')
-  //全局会使用到的用户信息
   const userName = ref<string>('')
   const userAvatar = ref<string>('')
   const role = ref<string>('')
-  //登录时获取用户相关信息
+
   const getUserInfo = async (telephone: object) => {
     const userInfo = await login(telephone)
     token.value = userInfo.token
@@ -19,13 +19,14 @@ export const useUserStore = defineStore('user', () => {
     role.value = userInfo.role
     localStorage.setItem('token', token.value)
   }
+
   const logout = () => {
-    localStorage.setItem('token', '')
+    localStorage.removeItem('token')
     token.value = ''
     userName.value = ''
     userAvatar.value = ''
     role.value = ''
-    router.push('login')
+    router.push('/login')
   }
   return { token, userName, userAvatar, role, logout, getUserInfo }
 })

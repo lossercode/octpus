@@ -35,7 +35,6 @@ export class JwtMiddleware {
           });
           await next();
         } catch (error) {
-          //token过期，重新登录
           throw new httpError.UnauthorizedError();
         }
       }

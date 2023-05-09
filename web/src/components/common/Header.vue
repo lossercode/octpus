@@ -1,10 +1,14 @@
-/** * @description: 公用头部组件 * @return {*} * @Date: 2023-04-30 12:05:38 */
 <script setup lang="ts">
+/**
+ * @description: 公用头部组件
+ * @return {*}
+ * @Date: 2023-05-07 10:39:54
+ */
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 const router = useRouter()
 const userStore = useUserStore()
-console.log(userStore.token, userStore.role)
+const token = localStorage.getItem('token')
 </script>
 <template>
   <el-header>
@@ -17,12 +21,12 @@ console.log(userStore.token, userStore.role)
         <slot name="item" />
       </el-col>
       <el-col :span="4" class="flex">
-        <div class="flex user" v-if="userStore.token">
+        <div class="flex user" v-if="token">
           <el-avatar :src="userStore.userAvatar" />
           <span class="user-name">{{ userStore.userName }}</span>
           <el-dropdown trigger="click">
             <span>
-              <el-icon class="el-icon--right">
+              <el-icon>
                 <arrow-down />
               </el-icon>
             </span>
@@ -67,6 +71,7 @@ console.log(userStore.token, userStore.role)
   justify-content: center;
 }
 .user {
+  cursor: pointer;
   width: 60%;
   justify-content: space-between;
 }

@@ -3,7 +3,7 @@ import { Inject } from '@midwayjs/decorator';
 import { NewTaskService } from '../service/newTaskService';
 import { BaseResponse } from '../types/BaseResponse';
 
-@Controller('/task')
+@Controller('/api/task')
 export class NewTask {
   @Inject()
   newTaskService: NewTaskService;

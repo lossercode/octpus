@@ -15,7 +15,7 @@ const user = reactive({
 
 const verifyCode = throttle(async () => {
   const verifyCode = await getVerifyCode()
-  localStorage.setItem('verifyCode', String(verifyCode))
+  sessionStorage.setItem('verifyCode', String(verifyCode))
   ElMessage({
     showClose: true,
     message: `验证码为${verifyCode}`,
@@ -26,7 +26,7 @@ const verifyCode = throttle(async () => {
 //登录验证
 const submit = async () => {
   if (user.telephone.length > 0 && user.verifyCode.length > 0) {
-    if (user.verifyCode !== localStorage.getItem('verifyCode')) {
+    if (user.verifyCode !== sessionStorage.getItem('verifyCode')) {
       ElMessage({
         message: '验证码错误',
         showClose: true,

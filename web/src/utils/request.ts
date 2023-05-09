@@ -24,7 +24,7 @@ class Request {
     // 添加请求拦截器
     this.instance.interceptors.request.use(
       (res: InternalAxiosRequestConfig) => {
-        res.headers.Authorization = 'Bearer' + localStorage.getItem('token') || ''
+        res.headers.Authorization = 'Bearer ' + localStorage.getItem('token') || ''
         // 创建取消请求的控制器
         const controller = new AbortController()
         // 获取请求的 url
