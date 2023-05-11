@@ -9,4 +9,13 @@ export class Task {
 
   @prop({ allowMixed: Severity.ALLOW, type: () => [Object] })
   public configs: [object];
+
+  @prop()
+  public name: string;
+
+  @prop()
+  public des: string;
+
+  @prop()
+  public guide: string;
 }

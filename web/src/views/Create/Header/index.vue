@@ -65,8 +65,8 @@ const makeFile = async () => {
   }
   console.log(result)
 
-  const message = await getShell(result)
-  token.value = message.data
+  const message: any = await getShell(result)
+  token.value = message
   showDialog.value = true
 }
 </script>

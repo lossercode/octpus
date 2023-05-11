@@ -1,17 +1,17 @@
 import { Body, Controller, Post, Get, Query } from '@midwayjs/core';
 import { Inject } from '@midwayjs/decorator';
-import { NewTaskService } from '../service/newTaskService';
+import { TaskService } from '../service/taskService';
 import { BaseResponse } from '../types/BaseResponse';
 
 @Controller('/api/task')
-export class NewTask {
+export class Task {
   @Inject()
-  newTaskService: NewTaskService;
+  taskService: TaskService;
 
-  @Post('/addTask')
-  async addNewTask(@Body('') configs: Array<any>): Promise<BaseResponse<any>> {
+  @Post('/newTask')
+  async newTask(@Body('') task: any): Promise<BaseResponse<any>> {
     try {
-      const taskId = await this.newTaskService.addTask(configs);
+      const taskId = await this.taskService.newTask(task);
       console.log(taskId);
       return {
         code: 200,
@@ -29,11 +29,21 @@ export class NewTask {
 
   @Get('/getTask')
   async getTask(@Query('token') token: string): Promise<BaseResponse<any>> {
-    const configs = await this.newTaskService.getTask(token);
+    const configs = await this.taskService.getTask(token);
     return {
       code: 200,
       message: 'success',
       data: configs,
+    };
+  }
+
+  @Post('/addConfigs')
+  async addConfigs(@Body('') configs: Array<any>): Promise<BaseResponse<any>> {
+    const id = await this.taskService.addConfigs(configs);
+    return {
+      code: 200,
+      message: 'success',
+      data: id,
     };
   }
 }

@@ -33,8 +33,12 @@ export class JwtMiddleware {
           await this.jwtService.verify(token, {
             complete: true,
           });
+          const userInfo = this.jwtService.decode(token);
+          //解析token获取用户信息并传递给下层使用
+          ctx.setAttr('userId', userInfo['telephone']);
           await next();
         } catch (error) {
+          console.log(error);
           throw new httpError.UnauthorizedError();
         }
       }
