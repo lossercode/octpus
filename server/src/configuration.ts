@@ -12,6 +12,7 @@ import { JwtMiddleware } from './middleware/jwt.middleware';
 import { NotFoundFilter } from './filter/notfound.filter';
 import { DefaultErrorFilter } from './filter/default.filter';
 import { UnauthorizedErrorFilter } from './filter/unauthorized';
+import * as ws from '@midwayjs/ws';
 
 @Configuration({
   imports: [
@@ -25,6 +26,7 @@ import { UnauthorizedErrorFilter } from './filter/unauthorized';
     typegoose,
     orm,
     jwt,
+    ws,
   ],
   importConfigs: [join(__dirname, './config')],
 })

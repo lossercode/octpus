@@ -18,14 +18,32 @@ const addNewTask = async () => {
     }
   })
 }
+const lookTask = async (index: number) => {
+  router.push({
+    name: 'taskStatus',
+    params: {
+      id: tableData[index].id
+    }
+  })
+}
+const editTask = async (index: number) => {
+  router.push({
+    name: 'edit',
+    params: {
+      id: tableData[index].id
+    }
+  })
+}
 const tableData = [
   {
+    id: 0,
     date: '2016-05-03',
     name: 'Tom',
     statu: '正在运行',
     address: 'No. 189, Grove St, Los Angeles'
   },
   {
+    id: 1,
     date: '2016-05-02',
     name: 'John',
     statu: '已停止',
@@ -55,8 +73,9 @@ const tableData = [
       <el-table-column label="状态" prop="statu" />
       <el-table-column label="操作">
         <template #default="scope">
-          <el-button size="small" @click="() => scope.$index">编辑</el-button>
+          <el-button size="small" @click="editTask(scope.$index)">编辑</el-button>
           <el-button size="small" type="danger">删除</el-button>
+          <el-button size="small" @click="lookTask(scope.$index)">查看</el-button>
         </template>
       </el-table-column>
     </el-table>

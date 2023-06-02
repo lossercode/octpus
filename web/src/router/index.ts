@@ -43,6 +43,14 @@ const router = createRouter({
           component: () => import('@/views/User/main/log.vue')
         }
       ]
+    },
+    {
+      path: '/taskStatus/:id',
+      name: 'taskStatus',
+      meta: {
+        requiredAuth: true
+      },
+      component: () => import('@/views/TaskStatus/index.vue')
     }
   ]
 })
