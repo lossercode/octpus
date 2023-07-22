@@ -7,11 +7,11 @@ const router = useRouter()
 // const emit = defineEmits(['changeComponent'])
 const options = [
   {
-    label: '应用',
+    label: '项目',
     icon: 'House',
     list: [
-      { label: '我的应用', component: '/user/tasks' },
-      { label: '运行日志', component: '/user/log' }
+      { label: '我的项目', component: '/user/myTasks' },
+      { label: '项目日志', component: '/user/taskLogs' }
     ]
   },
   {

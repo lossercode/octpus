@@ -47,28 +47,43 @@ class Request {
           this.abortControllerMap.delete(url)
           const data = res.data
           //根据响应结果进行处理
-          switch (data.code) {
-            case 200:
-              resolve(data.data)
-              break
+          // switch (data.code) {
+          //   case 200:
+          //     resolve(data.data)
+          //     break
 
-            case 401:
-              ElMessage('请先登录')
-              reject()
-              break
+          //   case 401:
+          //     ElMessage.warning('请先登录')
+          //     reject()
+          //     break
 
-            case 500:
-              ElMessage('服务器错误')
-              reject()
-              break
+          //   case 404:
+          //     ElMessage.error('请求错误')
+          //     reject()
+          //     break
 
-            default:
-              ElMessage('未知错误')
-              reject()
+          //   case 500:
+          //     ElMessage.error('服务器错误')
+          //     reject()
+          //     break
+
+          //   default:
+          //     ElMessage.error('未知错误')
+          //     reject()
+          // }
+          if (data.code !== 200) {
+            ElMessage(data.message)
+            reject()
+          } else {
+            resolve(data.data)
           }
         })
       },
-      (err: any) => ElMessage(err.message) // 响应拦截器错误处理函数
+      (err: any) => {
+        // 响应拦截器错误处理函数
+        ElMessage.error(err.message)
+        throw new Error(err.message)
+      }
     )
   }
 

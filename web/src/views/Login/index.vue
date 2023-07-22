@@ -1,49 +1,52 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { getVerifyCode } from '@/api/login'
+import { getVerifyCode } from '@/api/user'
 import { ElMessage } from 'element-plus'
 import { throttle } from '@/utils/throttle'
 import { useUserStore } from '@/stores/user'
+import type { User } from '@/api'
 const { getUserInfo } = useUserStore()
 const router = useRouter()
 
-const user = reactive({
-  telephone: '',
+const user = reactive<User>({
+  userAccount: '',
   verifyCode: ''
 })
 
+// 是否同意用户协议
+const protocol = ref(false)
+
 const verifyCode = throttle(async () => {
-  const verifyCode = await getVerifyCode()
-  sessionStorage.setItem('verifyCode', String(verifyCode))
+  if (!user.userAccount) {
+    ElMessage.error('手机号不能为空')
+    return
+  }
+  const verify = await getVerifyCode(user.userAccount)
+  console.log(verify.code)
   ElMessage({
     showClose: true,
-    message: `验证码为${verifyCode}`,
+    message: `验证码为${verify.code}`,
     type: 'success'
   })
 }, 3000)
 
 //登录验证
 const submit = async () => {
-  if (user.telephone.length > 0 && user.verifyCode.length > 0) {
-    if (user.verifyCode !== sessionStorage.getItem('verifyCode')) {
-      ElMessage({
-        message: '验证码错误',
-        showClose: true,
-        type: 'warning'
-      })
-    } else {
-      await getUserInfo({ telephone: user.telephone })
-      ElMessage({
-        message: '登录成功',
-        showClose: false,
-        type: 'success'
-      })
-      router.push({ path: '/user/tasks' })
-    }
+  if (!protocol.value) {
+    ElMessage({
+      message: '请同意用户协议',
+      type: 'warning',
+      showClose: true
+    })
+    return
+  }
+  if (user.userAccount.length > 0 && user.verifyCode.length > 0) {
+    await getUserInfo(user)
+    router.push({ path: '/user/tasks' })
   } else {
     ElMessage({
-      message: '密码或密码不能为空',
+      message: '手机号或密码不能为空',
       type: 'warning',
       showClose: true
     })
@@ -53,7 +56,7 @@ const submit = async () => {
 <template>
   <div class="container">
     <el-row align="middle" justify="center" class="top">
-      <el-col :span="12">
+      <el-col :span="20">
         <el-row align="middle" justify="center">
           <el-col :span="12">
             <ElImage src="https://www.bazhuayu.com/images/bzy-logo.png" />
@@ -62,22 +65,22 @@ const submit = async () => {
       </el-col>
     </el-row>
     <el-row class="top form" align="middle" justify="center">
-      <el-col :span="16">
+      <el-col :span="20">
         <el-form>
           <el-form-item>
-            <el-input placeholder="请输入手机号/邮箱" v-model="user.telephone" />
+            <el-input placeholder="请输入手机号" v-model="user.userAccount" />
           </el-form-item>
           <el-form-item>
-            <el-col :span="16">
+            <el-col :span="14">
               <el-input placeholder="请输入验证码" v-model="user.verifyCode" />
             </el-col>
-            <el-col :span="6" :push="2">
+            <el-col :span="8" :push="2">
               <el-button style="width: 100%" @click="verifyCode">获取验证码</el-button>
             </el-col>
           </el-form-item>
           <el-form-item>
             <el-col :span="12">
-              <el-radio>我已阅读并同意《用户协议》</el-radio>
+              <el-checkbox v-model="protocol" label="我已同意用户协议" size="large" />
             </el-col>
           </el-form-item>
           <el-form-item>
@@ -93,7 +96,7 @@ const submit = async () => {
 </template>
 <style scoped>
 .container {
-  width: 500px;
+  width: 350px;
   height: 350px;
   padding: 10px 20px;
   border-radius: 10px;

@@ -51,6 +51,11 @@ const router = createRouter({
         requiredAuth: true
       },
       component: () => import('@/views/TaskStatus/index.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('@/views/404/index.vue')
     }
   ]
 })
@@ -58,7 +63,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isAuth = localStorage.getItem('token') || ''
   if (to.meta.requiredAuth && !isAuth) {
-    ElMessage('请先登录')
+    ElMessage.warning('请先登录')
     setTimeout(() => {
       next('/login')
     }, 2000)
