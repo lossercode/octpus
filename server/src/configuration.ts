@@ -13,6 +13,7 @@ import { NotFoundFilter } from './filter/notfound.filter';
 import { DefaultErrorFilter } from './filter/default.filter';
 import { UnauthorizedErrorFilter } from './filter/unauthorized';
 import * as ws from '@midwayjs/ws';
+import * as redis from '@midwayjs/redis';
 
 @Configuration({
   imports: [
@@ -27,6 +28,7 @@ import * as ws from '@midwayjs/ws';
     orm,
     jwt,
     ws,
+    redis,
   ],
   importConfigs: [join(__dirname, './config')],
 })

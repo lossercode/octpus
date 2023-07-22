@@ -14,7 +14,7 @@ export default {
   mongoose: {
     dataSource: {
       default: {
-        uri: 'mongodb://localhost:27017/octopus',
+        uri: 'mongodb://192.168.200.130:27017/octopus',
         options: {
           useNewUrlParser: true,
           useUnifiedTopology: true,
@@ -31,7 +31,7 @@ export default {
          * 单数据库实例
          */
         type: 'mysql',
-        host: 'localhost',
+        host: '192.168.200.130',
         port: 3306,
         username: 'root',
         password: '123456',
@@ -47,5 +47,13 @@ export default {
   jwt: {
     secret: 'mywebsite',
     expiresIn: '2d',
+  },
+  redis: {
+    client: {
+      port: 6379, // Redis port
+      host: '192.168.200.130', // Redis host
+      password: '123456',
+      db: 0,
+    },
   },
 } as MidwayConfig;

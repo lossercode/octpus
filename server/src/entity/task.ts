@@ -1,21 +1,39 @@
-import { prop, Severity } from '@typegoose/typegoose';
+import {
+  Column,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export class Task {
-  @prop()
-  public userId: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @prop()
-  public createTime: string;
+  @Column()
+  userAccount: string;
 
-  @prop({ allowMixed: Severity.ALLOW, type: () => [Object] })
-  public configs: [object];
+  @Column()
+  name: string;
 
-  @prop()
-  public name: string;
+  @Column()
+  des: string;
 
-  @prop()
-  public des: string;
+  @Column()
+  statu: number;
 
-  @prop()
-  public guide: string;
+  @UpdateDateColumn({
+    type: 'timestamp',
+  })
+  updateTime: Date;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+  })
+  createTime: Date;
+
+  @Column()
+  delete: number;
+
+  @Column('json')
+  content: JSON;
 }

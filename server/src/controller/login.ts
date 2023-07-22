@@ -1,24 +1,36 @@
-import { Body, Controller, Get, Post } from '@midwayjs/core';
+import { Body, Controller, Post } from '@midwayjs/core';
 import { Inject } from '@midwayjs/decorator';
 import { LoginService } from '../service/loginService';
-@Controller('/api/login')
+@Controller('/api/user')
 export class UserRelated {
   @Inject()
   loginService: LoginService;
 
-  @Get()
-  async loginVerifyCode() {
+  @Post('/verify')
+  async loginVerifyCode(@Body('userAccount') userAccount: string) {
+    const verifyCode = await this.loginService.generateVerifyCode(userAccount);
     return {
       message: 'success',
-      data: 1997,
+      data: {
+        code: verifyCode,
+      },
       code: 200,
     };
   }
 
-  @Post()
-  async login(@Body('telephone') telephone: string) {
-    const userInfo = await this.loginService.login(telephone);
-    console.log(userInfo);
+  @Post('/login')
+  async login(
+    @Body('userAccount') userAccount: string,
+    @Body('verifyCode') code: string
+  ) {
+    const userInfo = await this.loginService.login(userAccount, code);
+    if (!userInfo) {
+      return {
+        code: 200,
+        message: '验证码错误',
+        data: '',
+      };
+    }
     return {
       code: 200,
       message: 'success',

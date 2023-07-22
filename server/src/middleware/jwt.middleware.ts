@@ -35,7 +35,7 @@ export class JwtMiddleware {
           });
           const userInfo = this.jwtService.decode(token);
           //解析token获取用户信息并传递给下层使用
-          ctx.setAttr('userId', userInfo['telephone']);
+          ctx.setAttr('userId', userInfo['userAccount']);
           await next();
         } catch (error) {
           console.log(error);
@@ -47,7 +47,7 @@ export class JwtMiddleware {
 
   // 配置忽略鉴权的路由地址
   public match(ctx: Context): boolean {
-    const ignore = ctx.path.indexOf('/api/login') !== -1;
+    const ignore = ctx.path.indexOf('/api/user') !== -1;
     return !ignore;
   }
 }
