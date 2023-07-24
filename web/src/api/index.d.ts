@@ -29,7 +29,7 @@ export type TaskInfo = {
   id: number
   updateTime: string
   name: string
-  statu: string
+  statu: string | number
 }
 
 export type UserTasks = {

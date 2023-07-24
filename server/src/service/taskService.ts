@@ -1,8 +1,8 @@
 import { Inject, Provide } from '@midwayjs/core';
-import { InjectEntityModel } from '@midwayjs/typegoose';
-import { ReturnModelType } from '@typegoose/typegoose';
+import { InjectEntityModel } from '@midwayjs/typeorm';
 import { Task } from '../entity/task';
 import { Context } from '@midwayjs/koa';
+import { Repository } from 'typeorm';
 
 @Provide()
 export class TaskService {
@@ -10,40 +10,52 @@ export class TaskService {
   ctx: Context;
 
   @InjectEntityModel(Task)
-  taskModel: ReturnModelType<typeof Task>;
+  taskModel: Repository<Task>;
 
-  async newTask(task: any) {
-    const { _id: id } = await this.taskModel.create({
-      userId: this.ctx.getAttr('userId'),
-      ...task,
-      createTime: new Date().getTime(),
-      configs: [],
-    } as Task);
-    return id;
+  async newTask(name: string, des: string) {
+    const isDuplicate = await this.taskModel.findOne({
+      where: { name: name },
+    });
+    if (isDuplicate) {
+      throw new Error(`Task ${name} already exists`);
+    }
+    const task = new Task();
+    task.name = name;
+    task.des = des;
+    task.content = JSON.parse('{}');
+    task.userAccount = this.ctx.getAttr('userAccount');
+    const newTaskResult = await this.taskModel.save(task);
+    return newTaskResult.id;
   }
 
-  async getTask(id: string) {
-    try {
-      const task = await this.taskModel.findById(id).exec();
-      return task;
-    } catch (error) {
-      return 'id is invaild';
+  async getTask(id: number) {
+    const task = await this.taskModel.findOne({
+      where: { id: id },
+    });
+    if (!task) {
+      throw new Error('项目不存在');
     }
+    return task;
   }
 
-  async addConfigs(configs: Array<any>) {
-    try {
-      await this.taskModel.updateOne(
-        { userId: this.ctx.getAttr('userId') },
-        { configs: configs }
-      );
-      const { _id: id } = await this.taskModel.findOne({
-        userId: this.ctx.getAttr('userId'),
-      });
-      return id;
-    } catch (error) {
-      console.log(error);
-      return 'error';
-    }
+  async setTaskContent(id: number, content: JSON) {
+    const task = await this.taskModel.findOne({
+      where: { id: id },
+    });
+    task.content = content;
+    await this.taskModel.save(task);
+  }
+
+  async getUserAllTasksService(userAccount: string, offset: number) {
+    const [allTasks, count] = await this.taskModel.findAndCount({
+      select: ['id', 'name', 'statu', 'updateTime'],
+      where: { userAccount: userAccount },
+    });
+    const someTasks = allTasks.slice(
+      (offset - 1) * 10,
+      offset * 10 > count ? count + 1 : (offset + 1) * 10
+    );
+    console.log(someTasks, count);
+    return [someTasks, count];
   }
 }

@@ -38,7 +38,7 @@ export class LoginService {
 
     //生成jwt返回
     const jwt = await this.jwtService.sign({
-      userAccout: userAccount,
+      userAccount: userAccount,
       date: Math.floor(Date.now() / 1000) - 30,
     });
 

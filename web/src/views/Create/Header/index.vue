@@ -73,21 +73,22 @@ const makeFile = async () => {
 <template>
   <el-header>
     <el-row align="middle">
-      <el-col :span="1" :offset="1">
-        <el-icon :size="26">
+      <el-col :span="2">
+        <el-icon :size="24">
           <Back />
         </el-icon>
+        <span style="font-size: 14px"> 返回主页</span>
       </el-col>
-      <el-col :span="2">
+      <!-- <el-col :span="2">
         <span>返回主页</span>
-      </el-col>
-      <el-col :span="2" :offset="9">
-        <el-button type="primary" @click="makeFile">生成私钥</el-button>
+      </el-col> -->
+      <el-col :span="2" :offset="18">
+        <el-button type="primary" @click="makeFile">立即运行</el-button>
       </el-col>
       <el-col :span="2">
         <el-button type="danger" @click="() => (componentList.length = 0)">撤销重做</el-button>
       </el-col>
-      <el-col :span="2">
+      <!-- <el-col :span="2">
         <el-button>代码预览</el-button>
       </el-col>
       <el-col :span="2">
@@ -95,7 +96,7 @@ const makeFile = async () => {
       </el-col>
       <el-col :span="2">
         <a href="">文档教程</a>
-      </el-col>
+      </el-col> -->
     </el-row>
   </el-header>
   <el-dialog v-model="showDialog" width="35%" title="运行项目">

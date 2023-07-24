@@ -86,6 +86,7 @@ const dragover = (e: any) => {
         <el-col :span="23" @dragover="dragover">
           <el-row v-for="(component, index) in componentList" :key="component.id" align="middle">
             <el-col :span="23">
+              // 渲染单个组件
               <div class="component">
                 <RenderFlow
                   :index="index"

@@ -16,6 +16,7 @@ export class JwtMiddleware {
     return async (ctx: Context, next: NextFunction) => {
       // 判断下有没有校验信息
       if (!ctx.headers['authorization']) {
+        console.log('yes')
         throw new httpError.UnauthorizedError();
       }
       // 从 header 上获取校验信息
@@ -35,12 +36,12 @@ export class JwtMiddleware {
           });
           const userInfo = this.jwtService.decode(token);
           //解析token获取用户信息并传递给下层使用
-          ctx.setAttr('userId', userInfo['userAccount']);
-          await next();
+          ctx.setAttr('userAccount', userInfo['userAccount']);
         } catch (error) {
           console.log(error);
           throw new httpError.UnauthorizedError();
         }
+        await next();
       }
     };
   }

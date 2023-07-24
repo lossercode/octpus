@@ -4,7 +4,6 @@ import { ref, reactive, onMounted } from 'vue'
 import { newTask } from '@/api/tasks'
 import router from '@/router'
 import { deleteUserTask, userAllTasks } from '@/api/tasks'
-import { useUserStore } from '@/stores/user'
 import type { UserTasks } from '@/api'
 
 // 两个提示框
@@ -15,17 +14,23 @@ const delete_id = ref(-1)
 
 // 用户所有的项目数据
 const userTasks = reactive<UserTasks>({ tasksList: [], total: 0 })
-const { userId } = useUserStore()
 
 /**
  * 请求用户项目,每次请求最多返回10个
  * @param current 当前选中的页数
  */
 const getUserTasks = async (current: number) => {
-  const allTasks = await userAllTasks(userId, current)
-  userTasks.tasksList = allTasks.tasksList
+  const allTasks = await userAllTasks(current)
+  // statu 做一个转换
+  userTasks.tasksList = allTasks.tasksList.map((task) => {
+    if (typeof task.statu === 'number') {
+      task.statu = task.statu === 0 ? '待运行' : task.statu === 1 ? '运行中' : '已完成'
+    }
+    return task
+  })
   userTasks.total = allTasks.total
 }
+
 onMounted(async () => {
   // 初始时获取用户所有任务信息
   getUserTasks(1)
@@ -147,6 +152,7 @@ const editTask = async (index: number) => {
       :size="10"
       :hide-on-single-page="true"
       @current-change="getUserTasks"
+      v-if="userTasks.total > 0"
     />
   </div>
 

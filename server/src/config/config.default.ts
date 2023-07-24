@@ -20,7 +20,7 @@ export default {
           useUnifiedTopology: true,
         },
         // 关联实体
-        entities: [Task],
+        entities: ['**/entity/*{.ts,.js}'],
       },
     },
   },
@@ -40,7 +40,7 @@ export default {
         logging: false,
 
         // 配置实体模型
-        entities: [User],
+        entities: [User, Task],
       },
     },
   },
@@ -52,7 +52,7 @@ export default {
     client: {
       port: 6379, // Redis port
       host: '192.168.200.130', // Redis host
-      password: '123456',
+      password: '',
       db: 0,
     },
   },

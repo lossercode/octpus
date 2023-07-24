@@ -108,5 +108,3 @@ export const observer = (element, data) => {
         }, 60 * 1000);
     }
 }
-
-

@@ -2,9 +2,9 @@ import myRequest from '@/utils/request'
 import type { NewTaskProps, UserTasks } from '.'
 
 // 获取用户所有的任务
-export const userAllTasks = (userId: number, offset: number) => {
+export const userAllTasks = (offset: number) => {
   return myRequest.request<UserTasks>({
-    url: `/tasks/userAllTasks?userId=${userId}&offset=${offset}`,
+    url: `/task/getUserAllTasks?offset=${offset}`,
     method: 'get'
   })
 }
@@ -18,7 +18,7 @@ export const deleteUserTask = (userId: number) => {
 
 export const newTask = (task: NewTaskProps) => {
   return myRequest.request<number>({
-    url: '/tasks/addNewTask',
+    url: '/task/newTask',
     method: 'post',
     data: task
   })
