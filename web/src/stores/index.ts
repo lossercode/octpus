@@ -1,18 +1,19 @@
+import type { Component } from '@/schema'
 import { defineStore } from 'pinia'
 import { reactive } from 'vue'
 
 export const useComponentStore = defineStore('componentList', () => {
-  const componentList = reactive<any[]>([])
-  function addComponent(component: any, index: number) {
-    componentList.splice(index, 0, component)
-  }
+  const componentList = reactive<Component[]>([])
+
+  // function addComponent(component: Component, index: number) {
+  //   componentList.splice(index, 0, component)
+  // }
   function deleteComponent(index: number) {
     let end = index
-    if (componentList[index].nestedEnd) {
+    if (componentList[index].nestedProps) {
       //找到结束组件位置,
       for (let i = index; i < componentList.length; i++) {
-        const pattern = /.*End/
-        if (pattern.test(componentList[i].id)) {
+        if (componentList[i].props.length === 0) {
           end = i
           break
         }
@@ -23,5 +24,5 @@ export const useComponentStore = defineStore('componentList', () => {
   function findComponent(index: number) {
     return componentList[index]
   }
-  return { componentList, addComponent, deleteComponent, findComponent }
+  return { componentList, deleteComponent, findComponent }
 })

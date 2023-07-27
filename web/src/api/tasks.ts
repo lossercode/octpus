@@ -23,3 +23,10 @@ export const newTask = (task: NewTaskProps) => {
     data: task
   })
 }
+
+export const getTaskContent = (taskId: number) => {
+  return myRequest.request<any[]>({
+    url: `/task/getTaskContent?taskId=${taskId}`,
+    method: 'get'
+  })
+}

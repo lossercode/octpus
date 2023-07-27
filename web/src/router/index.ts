@@ -60,16 +60,16 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
-  const isAuth = localStorage.getItem('token') || ''
-  if (to.meta.requiredAuth && !isAuth) {
-    ElMessage.warning('请先登录')
-    setTimeout(() => {
-      next('/login')
-    }, 2000)
-  } else {
-    next()
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   const isAuth = localStorage.getItem('token') || ''
+//   if (to.meta.requiredAuth && !isAuth) {
+//     ElMessage.warning('请先登录')
+//     setTimeout(() => {
+//       next('/login')
+//     }, 2000)
+//   } else {
+//     next()
+//   }
+// })
 
 export default router

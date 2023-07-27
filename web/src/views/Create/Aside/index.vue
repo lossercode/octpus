@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { schemas } from '@/schema'
-const customList = ['流程控制', '数据获取', '其他行为']
+
+const componentType = ['流程控制', '数据获取', '其他行为']
 //拖拽时传递组件的名称
-const handleDragStart = (id: string, e: any) => {
-  e.dataTransfer.setData('id', id)
+const handleDragStart = (componentName: string, e: any) => {
+  e.dataTransfer.setData('componentName', componentName)
 }
 </script>
 <template>
   <div class="container">
-    <el-row v-for="(list, index) in customList" :key="index">
+    <el-row v-for="(list, index) in componentType" :key="index">
       <el-col>
         <el-row>
           <el-col>
@@ -16,12 +17,12 @@ const handleDragStart = (id: string, e: any) => {
           </el-col>
         </el-row>
         <el-row
-          v-for="item in schemas.filter((item) => item.typeName === customList[index])"
-          :key="item.id"
+          v-for="item in schemas.filter((item) => item.type === index)"
+          :key="item.title"
           class="item"
           align="middle"
           draggable="true"
-          @dragstart="handleDragStart(item.id, $event)"
+          @dragstart="handleDragStart(item.name, $event)"
         >
           <el-col :span="6" class="center">
             <el-icon :size="22">

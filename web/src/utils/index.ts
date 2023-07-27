@@ -14,7 +14,3 @@ export const deepCopy = (target: any) => {
   }
   return target
 }
-
-export const findItem = (items: any, id: string) => {
-  return items.find((item: any) => item.id === id)
-}

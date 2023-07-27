@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { ComponentProps } from '@/schema'
 const props = defineProps({
   icon: {
     type: String,
@@ -9,8 +10,8 @@ const props = defineProps({
     type: String,
     required: true
   },
-  configs: {
-    type: Array<any>,
+  config: {
+    type: Array<ComponentProps>,
     required: true
   },
   //组件的位置索引，方便定位
@@ -29,7 +30,7 @@ const changeComponent = () => {
 }
 //使用计算属性过滤是否需要渲染描述字段
 const items = computed(() => {
-  return props.configs.filter((item) => item.preDes)
+  return props.config.filter((item) => item.beforeDes)
 })
 </script>
 <template>
@@ -47,8 +48,8 @@ const items = computed(() => {
     </el-col>
     <el-col :span="16" class="flex">
       <div class="flex gap" v-for="item in items" :key="item.propName">
-        <div class="preDes" v-if="item.preDes">{{ item.preDes }}</div>
-        <div @click="changeComponent" class="value" v-if="item.preDes">
+        <div class="preDes" v-if="item.beforeDes">{{ item.beforeDes }}</div>
+        <div @click="changeComponent" class="value" v-if="item.beforeDes">
           {{
             (typeof item.value === 'string' && item.value.length > 20) ||
             typeof item.value === 'object'
@@ -56,7 +57,7 @@ const items = computed(() => {
               : item.value
           }}
         </div>
-        <div v-if="item.suffixDes" class="suffixDes">{{ item.suffixDes }}</div>
+        <div v-if="item.afterDes" class="suffixDes">{{ item.afterDes }}</div>
       </div>
     </el-col>
   </el-row>

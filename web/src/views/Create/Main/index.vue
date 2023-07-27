@@ -1,57 +1,74 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useComponentStore } from '@/stores'
-import { deepCopy, findItem } from '@/utils'
+import { deepCopy } from '@/utils'
 import { schemas } from '@/schema'
 import RenderFlow from '@/components/common/RenderFlow.vue'
-const { componentList, addComponent, deleteComponent } = useComponentStore()
+import { getTaskContent } from '@/api/tasks'
+import { useRoute } from 'vue-router'
+import type { ComponentProps } from '@/schema'
+import type { Component } from '@/schema'
+const { componentList, deleteComponent } = useComponentStore()
 const showDialog = ref<boolean>(false)
 const lineTop = ref<number>(0)
 const showLine = ref<boolean>(false)
-const currentComponent = ref<number>(0)
+// const currentComponent = ref<number>(0)
+const currentComponent = ref<string>('')
+// 组件当前的状态，0表示新建，1表示修改
+const componentStatu = ref<number>(0)
+const selectedIndex = ref<number>(0)
+const route = useRoute()
 
 //监听组件拖拽drop事件
 const handleDrop = (e: any) => {
+  // 组件状态为新增状态
+  componentStatu.value = 0
   //停止拖拽后网格线消失
   showLine.value = false
+
   //获取组件的id
-  const id = e.dataTransfer.getData('id')
-  //在schema中找到对应组件
-  const component = schemas.filter((item) => item.id === id)[0]
-  //深拷贝对应组件放到pinia中，并且根据当前的指示线的高度来进行计算要插入的位置，
-  addComponent(deepCopy(component), Math.floor(lineTop.value / 50))
-  //判断元素是否是嵌套组件
-  if (component.nestedEnd) {
-    addComponent(
-      deepCopy(findItem(schemas, component.nestedEnd)),
-      Math.floor(lineTop.value / 50) + 1
-    )
-  }
-  //拖拽结束后将当前组件索引指向拖拽组件
-  currentComponent.value = Math.floor(lineTop.value / 50)
-  //判断是否处于嵌套组件中
-  isLoop(currentComponent.value)
-  //打开配置项
+  // const componentName = e.dataTransfer.getData('componentName')
+  // currentComponent.value = Math.floor(lineTop.value / 50)
+  // 获取组件的名称
+  currentComponent.value = e.dataTransfer.getData('componentName')
+  // //设置缩进
+  // setIndent(currentComponent.value)
+  // //打开配置项
   showDialog.value = true
+  //在schema中找到对应组件
+  // const component = schemas.filter((item) => item.componentName === componentName)[0]
+  //深拷贝对应组件放到pinia中，并且根据当前的指示线的高度来进行计算要插入的位置
+  // addComponent(deepCopy(component), Math.floor(lineTop.value / 50))
+  //如果元素是嵌套组件则还需要加上一个结尾组件
+  // if (component.nested) {
+  //   const nested: Component = {
+  //     componentName: 'Nested',
+  //     static: { ...component.nested },
+  //     config: [],
+  //     indent: 0,
+  //     dialogWidth: ''
+  //   }
+  //   addComponent(nested, Math.floor(lineTop.value / 50) + 1)
+  // }
+  // //拖拽结束后将当前组件索引指向拖拽组件
 }
 //判断是否处于嵌套组件中
-const isLoop = (currentIndex: number) => {
+const setIndent = (currentIndex: number) => {
   let temp = currentIndex - 1
-  //第一个元素不需要判断
+  //第一个元素无需设置
   if (temp < 0) {
-    componentList[currentIndex].indent = 0
     return
   }
-  let indent = 0
   //如果前面一个是循环结束标志，就直接在前面一个的indent上加一，如果是同级元素就相同的indent
-  if (componentList[temp].nestedEnd) {
-    indent = componentList[temp].indent ? componentList[temp].indent + 1 : 1
+  if (componentList[temp].nestedProps) {
+    componentList[currentIndex].indent = componentList[temp].indent + 1
   } else {
-    indent = componentList[temp].indent
+    componentList[currentIndex].indent = componentList[temp].indent
   }
-  componentList[currentIndex].indent = indent
   //如果当前组件是嵌套组件，结尾组件也需要设置缩进
-  if (componentList[currentIndex].nestedEnd) componentList[currentIndex + 1].indent = indent
+  if (componentList[currentIndex].nestedProps) {
+    componentList[currentIndex + 1].indent = componentList[currentIndex].indent
+  }
 }
 /**
  * @description: 监听拖拽事件，计算出网格线的位置
@@ -71,6 +88,47 @@ const dragover = (e: any) => {
     lineTop.value = Math.floor(top / 50) * 50 + 20
   }
 }
+
+const addComponent = (data: ComponentProps[]) => {
+  // 如果组件状态处于修改状态就不添加
+  if (componentStatu.value === 1) {
+    componentList[selectedIndex.value].props = data
+    showDialog.value = false
+    return
+  }
+  // 从schema中提取当前选中的组件, 注意是深拷贝，即新建一个对象
+  const component = deepCopy(schemas.filter((item) => item.name === currentComponent.value)[0])
+  // 设置当前组件的属性
+  component.props = data
+  // 根据指示线的位置确定要插入的位置
+  const index = Math.floor(lineTop.value / 50)
+  // 插入到组件列表中
+  componentList.splice(index, 0, component)
+  // 如果是嵌套组件，嵌套结尾组件也要插入
+  if (component.nestedProps) {
+    const nestedEnd: Component = { ...component.nestedProps, name: 'Nested', props: [] }
+    componentList.splice(index + 1, 0, nestedEnd)
+  }
+  // 设置缩进
+  setIndent(index)
+  // 关闭模态款
+  showDialog.value = false
+  console.log(componentList)
+}
+
+// onMounted(async () => {
+//   // 初始加载时获取任务具体配置信息
+//   const content = await getTaskContent(Number(route.params.id))
+//   componentList.length = 0
+//   componentList.push(...content)
+//   console.log(componentList)
+// })
+const editComponent = (index: number) => {
+  // 通过模态框进行配置
+  showDialog.value = true
+  componentStatu.value = 1
+  selectedIndex.value = index
+}
 </script>
 <template>
   <div class="container" @drop.stop="handleDrop" @dragover.stop.prevent>
@@ -78,28 +136,28 @@ const dragover = (e: any) => {
       <el-row class="content">
         <!-- 左侧流程序号 -->
         <el-col :span="1">
-          <div class="index" v-for="(item, index) in componentList" :key="item.id">
+          <div class="index" v-for="(item, index) in componentList" :key="item.name">
             {{ index + 1 }}
           </div>
         </el-col>
         <!-- 流程图渲染 -->
         <el-col :span="23" @dragover="dragover">
-          <el-row v-for="(component, index) in componentList" :key="component.id" align="middle">
+          <el-row v-for="(component, index) in componentList" :key="component.name" align="middle">
             <el-col :span="23">
-              // 渲染单个组件
+              <!-- 渲染单个组件 -->
               <div class="component">
                 <RenderFlow
                   :index="index"
                   :icon="component.iconName"
                   :title="component.title"
-                  :configs="component.configs"
-                  :indent="component.indent ?? 0"
-                  @change="(index:number) => (showDialog = true) && (currentComponent = index)"
+                  :config="component.props"
+                  :indent="component.indent"
+                  @change="editComponent"
                 />
               </div>
             </el-col>
             <!-- 如果有typeName表示不是嵌套组件的结束组件，可以删除 -->
-            <el-col :span="1" class="center" v-if="component.typeName !== 'nestedEnd'">
+            <el-col :span="1" class="center" v-if="component.props.length">
               <el-icon color="#F56C6C" :size="22" @click="deleteComponent(index)">
                 <Delete />
               </el-icon>
@@ -110,13 +168,11 @@ const dragover = (e: any) => {
       <!-- 对齐线 -->
       <div class="line" :style="{ top: lineTop + 'px' }" v-if="showLine" />
       <!-- 配置项模态框 -->
-      <el-dialog
-        v-model="showDialog"
-        title="配置项"
-        :width="componentList[currentComponent]?.dialogWidth"
-      >
-        <!-- style="--el-dialog-width: 32%" -->
-        <!-- <el-form v-model="componentList[currentComponent]">
+    </div>
+  </div>
+  <el-dialog v-model="showDialog" title="配置项" width="38%" destroy-on-close>
+    <!-- style="--el-dialog-width: 32%" -->
+    <!-- <el-form v-model="componentList[currentComponent]">
           <el-form-item
             v-for="config in componentList[currentComponent]?.configs"
             :key="config.propName"
@@ -138,15 +194,19 @@ const dragover = (e: any) => {
             </el-row>
           </el-form-item>
         </el-form> -->
-        <component :is="componentList[currentComponent]?.componentName" :index="currentComponent" />
-        <template #footer>
-          <span>
-            <el-button type="primary" @click="showDialog = false">确定</el-button>
-          </span>
-        </template>
-      </el-dialog>
-    </div>
-  </div>
+    <!-- <component :is="componentList[currentComponent]?.componentName" :index="currentComponent" /> -->
+    <component
+      :is="currentComponent"
+      @transferData="addComponent"
+      :index="selectedIndex"
+      :statu="componentStatu"
+    />
+    <!-- <template #footer>
+      <span>
+        <el-button type="primary" @click="showDialog = false">确定</el-button>
+      </span>
+    </template> -->
+  </el-dialog>
 </template>
 <style scoped>
 .container {
