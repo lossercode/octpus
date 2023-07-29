@@ -9,13 +9,14 @@
 import { clickElement, getData, moveToBottom, observer } from "./utils/dom"
 import { getLocal} from "./utils/storage"
 const core = async () => {
-  let project = await getLocal('projectInfo')
-  project = project['projectInfo']
+  let task = await getLocal('taskInfo')
+  // 如果是打开新页面则需要设置默认等待
+  let time = task[0].name === 'newTab' ? task[0].wait * 1000 : 3000
   const data = []
   if(project.length > 0){
     setTimeout(() => {
         parse(project, data)
-      }, 3000);
+      }, time);
   }
 }
 
@@ -27,13 +28,13 @@ const parse = async (element, data) => {
     data.length = 0
   }
   for(let i=0; i<element.length; i++){
-    let id = element[i].id
-    switch(id){
-      case 'loop':
+    let name = element[i].name
+    switch(name){
+      case 'Loop':
         for(let j=0; j<element[i]['circleCount']; j++){
           setTimeout(() => {
             console.log(`我是第${j}次循环`)
-            parse(element[i]['child'], data)
+            parse(element[i]['children'], data)
           }, j * 3000);
         }
         break

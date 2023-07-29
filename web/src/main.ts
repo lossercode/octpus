@@ -11,7 +11,15 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 // //全局注册自定义组件
 // const commonComponents = ['MySelect']
 // import * as CustomComponents from '@/components'
-const customComponents = ['GetData', 'MutationObserver', 'Loop', 'MoveToBottom', 'NewTab']
+const customComponents = [
+  'GetData',
+  'MutationObserver',
+  'Loop',
+  'MoveToBottom',
+  'NewTab',
+  'MyInput',
+  'ClickElement'
+]
 
 app.use(pinia)
 pinia.use(piniaPluginPersistedstate)

@@ -1,19 +1,17 @@
-import { getProjectInfo } from "./api/getProject";
 import { postData } from "./api/postData";
-import { getLocal } from "./utils/storage";
+import { getTask } from "./api/task";
+import { getLocal, setLocal } from "./utils/storage";
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   //sender在此处没有意义
   // popup页面传输的数据——uuid
   if (request.type === "popup") {
-    //配置项本地化存储
-    await getProjectInfo(request.data);
+    const info = await getTask(request.data);
+    // 本地化存储方便content.js读取
+    setLocal('taskInfo', info)
     //读取配置，检查是否有打开新网页这个流程
-    let project = await getLocal('projectInfo')
-    project = project['projectInfo']
-    console.log(project)
-    if(project[0]['id'] === 'newTab'){
+    if(info[0]['name'] === 'NewTab'){
       await chrome.tabs.create({
-        url: project[0]['openTab']
+        url: info[0].url
       })
     }
     //注入content.js
