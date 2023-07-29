@@ -28,20 +28,21 @@ onMounted(() => {
 const data = reactive<ComponentProps[]>([
   {
     propName: 'count',
-    value: 1,
-    beforeDes: '循环',
-    afterDes: '次'
+    value: '',
+    beforeDes: '点击元素'
   }
 ])
 </script>
 <template>
   <el-form>
-    <el-form-item label="循环次数">
-      <el-input-number v-model="data[0].value" />
+    <el-form-item label="元素定位">
+      <el-input v-model="data[0].value" />
     </el-form-item>
-    <el-row justify="end">
-      <el-button type="primary" @click="emit('transferData', data)">确定</el-button>
-    </el-row>
+    <el-form-item>
+      <el-row justify="end" style="width: 100%">
+        <el-button type="primary" @click="emit('transferData', data)">确定</el-button>
+      </el-row>
+    </el-form-item>
   </el-form>
 </template>
 <style scoped></style>

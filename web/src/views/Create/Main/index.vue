@@ -12,47 +12,30 @@ const { componentList, deleteComponent } = useComponentStore()
 const showDialog = ref<boolean>(false)
 const lineTop = ref<number>(0)
 const showLine = ref<boolean>(false)
-// const currentComponent = ref<number>(0)
+// 记录当前组件名称
 const currentComponent = ref<string>('')
 // 组件当前的状态，0表示新建，1表示修改
 const componentStatu = ref<number>(0)
-const selectedIndex = ref<number>(0)
+const currentIndex = ref<number>(0)
 const route = useRoute()
 
 //监听组件拖拽drop事件
 const handleDrop = (e: any) => {
   // 组件状态为新增状态
-  componentStatu.value = 0
+  // componentStatu.value = 0
   //停止拖拽后网格线消失
   showLine.value = false
-
-  //获取组件的id
-  // const componentName = e.dataTransfer.getData('componentName')
-  // currentComponent.value = Math.floor(lineTop.value / 50)
   // 获取组件的名称
-  currentComponent.value = e.dataTransfer.getData('componentName')
-  // //设置缩进
-  // setIndent(currentComponent.value)
+  currentComponent.value = e.dataTransfer.getData('name')
   // //打开配置项
   showDialog.value = true
-  //在schema中找到对应组件
-  // const component = schemas.filter((item) => item.componentName === componentName)[0]
-  //深拷贝对应组件放到pinia中，并且根据当前的指示线的高度来进行计算要插入的位置
-  // addComponent(deepCopy(component), Math.floor(lineTop.value / 50))
-  //如果元素是嵌套组件则还需要加上一个结尾组件
-  // if (component.nested) {
-  //   const nested: Component = {
-  //     componentName: 'Nested',
-  //     static: { ...component.nested },
-  //     config: [],
-  //     indent: 0,
-  //     dialogWidth: ''
-  //   }
-  //   addComponent(nested, Math.floor(lineTop.value / 50) + 1)
-  // }
-  // //拖拽结束后将当前组件索引指向拖拽组件
 }
-//判断是否处于嵌套组件中
+
+/**
+ * @description: 设置组件缩进属性，主要用来判断层级关系
+ * @param {*} currentIndex 鼠标拖放事件结束后根据位置计算出来要插入的位置
+ * @return {*}
+ */
 const setIndent = (currentIndex: number) => {
   let temp = currentIndex - 1
   //第一个元素无需设置
@@ -89,10 +72,15 @@ const dragover = (e: any) => {
   }
 }
 
+/**
+ * @description: 添加新组件/修改组件
+ * @param {*} data 通过模态款获取到的配置信息
+ * @return {*}
+ */
 const addComponent = (data: ComponentProps[]) => {
   // 如果组件状态处于修改状态就不添加
   if (componentStatu.value === 1) {
-    componentList[selectedIndex.value].props = data
+    componentList[currentIndex.value].props = data
     showDialog.value = false
     return
   }
@@ -116,19 +104,23 @@ const addComponent = (data: ComponentProps[]) => {
   console.log(componentList)
 }
 
-// onMounted(async () => {
-//   // 初始加载时获取任务具体配置信息
-//   const content = await getTaskContent(Number(route.params.id))
-//   componentList.length = 0
-//   componentList.push(...content)
-//   console.log(componentList)
-// })
 const editComponent = (index: number) => {
   // 通过模态框进行配置
   showDialog.value = true
   componentStatu.value = 1
-  selectedIndex.value = index
+  currentIndex.value = index
+  currentComponent.value = componentList[index].name
 }
+
+onMounted(async () => {
+  // 初始加载时获取任务具体配置信息
+  const content = await getTaskContent(Number(route.params.id))
+  if (content.length > 0) {
+    componentList.length = 0
+    componentList.push(...content)
+    console.log(componentList)
+  }
+})
 </script>
 <template>
   <div class="container" @drop.stop="handleDrop" @dragover.stop.prevent>
@@ -171,41 +163,12 @@ const editComponent = (index: number) => {
     </div>
   </div>
   <el-dialog v-model="showDialog" title="配置项" width="38%" destroy-on-close>
-    <!-- style="--el-dialog-width: 32%" -->
-    <!-- <el-form v-model="componentList[currentComponent]">
-          <el-form-item
-            v-for="config in componentList[currentComponent]?.configs"
-            :key="config.propName"
-            :label="config.formLabel"
-          >
-            <el-row style="width: 100%" align="middle">
-              <el-col :span="20">
-                <component
-                  :is="config.componentName"
-                  v-model="config.value"
-                  :options="config.options"
-                />
-              </el-col>
-              <el-col :span="4" class="flex" v-if="config.tips">
-                <el-tooltip effect="dark" :content="config.tips" placement="right">
-                  <el-icon class="tips" size="18"><QuestionFilled /></el-icon>
-                </el-tooltip>
-              </el-col>
-            </el-row>
-          </el-form-item>
-        </el-form> -->
-    <!-- <component :is="componentList[currentComponent]?.componentName" :index="currentComponent" /> -->
     <component
       :is="currentComponent"
-      @transferData="addComponent"
-      :index="selectedIndex"
+      :index="currentIndex"
       :statu="componentStatu"
+      @transferData="addComponent"
     />
-    <!-- <template #footer>
-      <span>
-        <el-button type="primary" @click="showDialog = false">确定</el-button>
-      </span>
-    </template> -->
   </el-dialog>
 </template>
 <style scoped>

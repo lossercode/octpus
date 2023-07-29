@@ -70,22 +70,6 @@ onMounted(() => {
     <el-row justify="end">
       <el-button type="primary" @click="emit('transferData', data)">确定</el-button>
     </el-row>
-    <!-- <el-form-item
-      v-for="config in componentList[props.index].config"
-      :label="config.label"
-      :key="config.propName"
-    >
-      <el-row style="width: 100%" align="middle">
-        <el-col :span="20">
-          <el-input v-model="config.value" />
-        </el-col>
-        <el-col :span="4" class="flex-center" v-if="config.tip">
-          <el-tooltip effect="dark" :content="config.tip" placement="right">
-            <el-icon size="18"><QuestionFilled /></el-icon>
-          </el-tooltip>
-        </el-col>
-      </el-row>
-    </el-form-item> -->
   </el-form>
 </template>
 <style scoped>

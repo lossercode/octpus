@@ -3,8 +3,8 @@ import { schemas } from '@/schema'
 
 const componentType = ['流程控制', '数据获取', '其他行为']
 //拖拽时传递组件的名称
-const handleDragStart = (componentName: string, e: any) => {
-  e.dataTransfer.setData('componentName', componentName)
+const handleDragStart = (name: string, e: any) => {
+  e.dataTransfer.setData('name', name)
 }
 </script>
 <template>

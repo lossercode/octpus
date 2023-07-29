@@ -1,9 +1,13 @@
 //定义组件的属性
+export interface ValueProps {
+  element: string
+  name: string
+}
 export interface ComponentProps {
-  beforeDes: string
+  beforeDes?: string
   afterDes?: string
   propName: string
-  value: string | number
+  value: string | number | ValueProps[]
 }
 export interface NestedProps {
   title: string
@@ -14,7 +18,7 @@ export interface Component {
   // 组件名称
   name: string
   // 组件类型
-  type?: number
+  type: number
   // 组件中文名
   title: string
   // 组件的icon
@@ -25,8 +29,6 @@ export interface Component {
   props: ComponentProps[]
   // 嵌套结尾信息
   nestedProps?: NestedProps
-  // 如果是嵌套组件子组件相关信息
-  children?: Component[]
 }
 export const schemas: Component[] = [
   {
@@ -35,7 +37,19 @@ export const schemas: Component[] = [
     title: '打开网页',
     iconName: 'Position',
     indent: 0,
-    props: []
+    props: [
+      {
+        propName: 'url',
+        value: '',
+        beforeDes: '新标签中打开'
+      },
+      {
+        propName: 'wait',
+        value: 1,
+        beforeDes: '等待',
+        afterDes: '秒'
+      }
+    ]
   },
   {
     name: 'Loop',
@@ -48,8 +62,50 @@ export const schemas: Component[] = [
       title: '循环结束',
       iconName: 'RefreshLeft',
       indent: 0
-    },
-    children: []
+    }
+  },
+  {
+    name: 'MutationObserver',
+    type: 1,
+    title: '监听DOM',
+    iconName: 'View',
+    props: [
+      {
+        propName: 'rootElement',
+        value: '',
+        beforeDes: '观察父节点'
+      }
+    ],
+    indent: 0,
+    nestedProps: {
+      iconName: 'Close',
+      title: '监听结束',
+      indent: 0
+    }
+  },
+  {
+    name: 'GetData',
+    type: 1,
+    iconName: 'Document',
+    indent: 0,
+    props: [],
+    title: '获取数据'
+  },
+  {
+    name: 'ClickElement',
+    type: 0,
+    indent: 0,
+    iconName: 'Mouse',
+    props: [],
+    title: '点击元素'
+  },
+  {
+    name: 'MoveToBottom',
+    type: 0,
+    indent: 0,
+    iconName: 'Promotion',
+    props: [],
+    title: '移动到底部'
   }
 ]
 // interface StaticProps {

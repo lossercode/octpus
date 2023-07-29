@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { getShell } from '@/api/getShell'
+import { updateTaskContent } from '@/api/tasks'
 import { useComponentStore } from '@/stores'
 import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+const route = useRoute()
 const { componentList } = useComponentStore()
-const token = ref<string>('null')
+const token = ref<number>(0)
 const showDialog = ref<boolean>(false)
 const copy = () => {
-  navigator.clipboard.writeText(token.value).then(
+  navigator.clipboard.writeText(token.value.toString()).then(
     function () {
       ElMessage({
         type: 'success',
@@ -23,52 +25,59 @@ const copy = () => {
   )
 }
 const makeFile = async () => {
-  //解析componentList
-  const result = []
-  for (let i = 0; i < componentList.length; i++) {
-    let cur = componentList[i]
-    //如果是循环结尾标记就跳过
-    if (cur.typeName === 'nestedEnd') {
-      continue
-    }
-    //先提取单独的信息
-    let temp = {}
-    //循环组件增加一个子节点信息
-    if (cur.nestedEnd) {
-      temp['child'] = []
-    }
-    cur.configs.forEach((element) => {
-      //需要对value值进行序列化操作，因为会出现值为proxy的情况
-      temp[element.propName] = JSON.parse(JSON.stringify(element.value))
-    })
-    //增加一个indent属性方便进行判断层级
-    temp['indent'] = cur.indent
-    //添加一个id字段方便后台判别
-    temp['id'] = cur.id
-
-    //根据缩进进行判断
-    if (cur.indent > 0) {
-      //找到当前队列的队尾元素
-      cur = result[result.length - 1]
-      while (Object.hasOwn(cur, 'child') && cur.indent !== temp.indent - 1) {
-        //当当前节点有child属性，递归到最底层的最后一个元素
-        if (cur['child'].length === 0) {
-          break
-        } else {
-          cur = cur['child'][cur['child'].length - 1]
-        }
-      }
-      cur['child'].push(temp)
-    } else {
-      result.push(temp)
-    }
-  }
-  console.log(result)
-
-  const message: any = await getShell(result)
-  token.value = message
-  showDialog.value = true
+  const data = JSON.stringify(componentList)
+  console.log(data)
+  const id = Number(route.params.id)
+  const result = await updateTaskContent(id, data)
+  token.value = result
 }
+// const makeFile = async () => {
+//   //解析componentList
+//   const result = []
+//   for (let i = 0; i < componentList.length; i++) {
+//     let cur = componentList[i]
+//     //如果是循环结尾标记就跳过
+//     if (cur.typeName === 'nestedEnd') {
+//       continue
+//     }
+//     //先提取单独的信息
+//     let temp = {}
+//     //循环组件增加一个子节点信息
+//     if (cur.nestedEnd) {
+//       temp['child'] = []
+//     }
+//     cur.configs.forEach((element) => {
+//       //需要对value值进行序列化操作，因为会出现值为proxy的情况
+//       temp[element.propName] = JSON.parse(JSON.stringify(element.value))
+//     })
+//     //增加一个indent属性方便进行判断层级
+//     temp['indent'] = cur.indent
+//     //添加一个id字段方便后台判别
+//     temp['id'] = cur.id
+
+//     //根据缩进进行判断
+//     if (cur.indent > 0) {
+//       //找到当前队列的队尾元素
+//       cur = result[result.length - 1]
+//       while (Object.hasOwn(cur, 'child') && cur.indent !== temp.indent - 1) {
+//         //当当前节点有child属性，递归到最底层的最后一个元素
+//         if (cur['child'].length === 0) {
+//           break
+//         } else {
+//           cur = cur['child'][cur['child'].length - 1]
+//         }
+//       }
+//       cur['child'].push(temp)
+//     } else {
+//       result.push(temp)
+//     }
+//   }
+//   console.log(result)
+
+//   const message: any = await getShell(result)
+//   token.value = message
+//   showDialog.value = true
+// }
 </script>
 <template>
   <el-header>
