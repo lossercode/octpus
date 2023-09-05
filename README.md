@@ -5,9 +5,10 @@
 
 拖拽页面
 
-![gif截图](./docs/2023-09-05-12-03-12.gif)
+![gif截图](https://picdl.sunbangyan.cn/2023/09/05/kdspsx.gif
+)
 
 
 项目管理页面
 
-![项目管理](./docs/2023-9-5.png)
+![项目管理](https://picdm.sunbangyan.cn/2023/09/05/kee60h.png)
