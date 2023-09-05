@@ -7,6 +7,8 @@
 // }
 // export type BaseResponse<T = any> = Promise<Response<T>>
 
+import type { Component } from '@/schema'
+
 // 登录所需要的用户信息
 export type User = {
   userAccount: string
@@ -43,4 +45,8 @@ export type UserTasks = {
 export type NewTaskProps = {
   name: string
   des: string
+}
+
+export type Task = {
+  content: Component[]
 }

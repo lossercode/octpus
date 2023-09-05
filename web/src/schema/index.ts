@@ -1,7 +1,7 @@
 //定义组件的属性
 export interface ValueProps {
   element: string
-  name: string
+  nameAs: string
 }
 export interface ComponentProps {
   beforeDes?: string

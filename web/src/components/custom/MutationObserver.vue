@@ -17,22 +17,22 @@ const props = defineProps({
 const { componentList } = useComponentStore()
 const data = reactive<ComponentProps[]>([
   {
-    propName: 'parentElement',
+    propName: 'parentNode',
     value: '',
     beforeDes: '监听父元素'
   },
   {
-    propName: 'end',
+    propName: 'endCondition',
     value: 'time',
     beforeDes: '结束时机'
   },
   {
     propName: 'time',
-    value: 0
+    value: 1
   },
   {
-    propName: 'child',
-    value: ''
+    propName: 'dataCount',
+    value: 1
   },
   {
     propName: 'newElement',
@@ -42,7 +42,7 @@ const data = reactive<ComponentProps[]>([
 const newElement = reactive<ValueProps[]>([
   {
     element: '',
-    name: ''
+    nameAs: ''
   }
 ])
 const options = [
@@ -51,8 +51,8 @@ const options = [
     label: '时间'
   },
   {
-    value: 'element',
-    label: '元素消失'
+    value: 'count',
+    label: '数据个数'
   }
 ]
 const submit = () => {
@@ -84,23 +84,23 @@ onMounted(() => {
     <el-form-item label="监听时长" v-if="data[1].value === 'time'">
       <el-input-number v-model="data[2].value" />
     </el-form-item>
-    <el-form-item label="判别元素" v-else>
-      <el-input v-model="data[3].value" />
+    <el-form-item label="数据个数" v-else>
+      <el-input-number v-model="data[3].value" />
     </el-form-item>
     <el-form-item label="当出现新元素时" />
 
-    <el-row v-for="(item, index) in newElement" :key="item.name" style="margin-bottom: 18px">
+    <el-row v-for="(item, index) in newElement" :key="index" style="margin-bottom: 18px">
       <el-col :span="9">
         <el-input v-model="item.element" placeholder="元素xpath操作" />
       </el-col>
       <el-col :span="9" :offset="1">
-        <el-input v-model="item.name" placeholder="将字段命名为" />
+        <el-input v-model="item.nameAs" placeholder="将字段命名为" />
       </el-col>
       <el-col :span="5" class="flex">
         <el-icon
           :size="22"
           style="cursor: pointer"
-          @click="newElement.push({ element: '', name: '' })"
+          @click="newElement.push({ element: '', nameAs: '' })"
           ><CirclePlus
         /></el-icon>
         <el-icon

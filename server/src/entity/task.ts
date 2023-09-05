@@ -36,6 +36,7 @@ export class Task {
   @Column()
   delete: number;
 
-  @Column('json')
-  content: JSON;
+  // 使用 Json 会存在长度限制，直接用longText
+  @Column()
+  content: string;
 }

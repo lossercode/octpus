@@ -22,7 +22,7 @@ export class TaskService {
     const task = new Task();
     task.name = name;
     task.des = des;
-    task.content = JSON.parse('{}');
+    task.content = '';
     task.userAccount = this.ctx.getAttr('userAccount');
     const newTaskResult = await this.taskModel.save(task);
     return newTaskResult.id;
@@ -38,7 +38,7 @@ export class TaskService {
     return task;
   }
 
-  async setTaskContent(id: number, content: JSON) {
+  async setTaskContent(id: number, content: string) {
     const task = await this.taskModel.findOne({
       where: { id: id },
     });

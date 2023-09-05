@@ -73,7 +73,7 @@ export class Task {
    * @Date: 2023-07-23 16:00:12
    */
   @Post('/setTaskContent')
-  async addConfigs(@Body('id') id: number, @Body('content') content: JSON) {
+  async addConfigs(@Body('id') id: number, @Body('content') content: string) {
     await this.taskService.setTaskContent(id, content);
     return {
       code: 200,

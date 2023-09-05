@@ -114,10 +114,10 @@ const editComponent = (index: number) => {
 
 onMounted(async () => {
   // 初始加载时获取任务具体配置信息
-  const content = await getTaskContent(Number(route.params.id))
-  if (content.length > 0) {
+  const task = await getTaskContent(Number(route.params.id))
+  if (task.content?.length > 0) {
     componentList.length = 0
-    componentList.push(...content)
+    componentList.push(...task.content)
     console.log(componentList)
   }
 })
