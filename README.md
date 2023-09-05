@@ -6,6 +6,8 @@
 拖拽页面
 
 ![12-03-12](https://picdl.sunbangyan.cn/2023/09/05/kdspsx.gif)
+https://picdl.sunbangyan.cn/2023/09/05/kdspsx.gif
+图片体积太大可能加载不出来
 
 
 
