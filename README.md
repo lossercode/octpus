@@ -5,8 +5,8 @@
 
 拖拽页面
 
-![gif截图](https://picdl.sunbangyan.cn/2023/09/05/kdspsx.gif
-)
+![12-03-12](https://picdl.sunbangyan.cn/2023/09/05/kdspsx.gif)
+
 
 
 项目管理页面
